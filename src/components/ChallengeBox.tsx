@@ -1,29 +1,32 @@
+import { useChallenge } from '../hooks/challenges';
+
 import styles from '../styles/components/ChallengeBox.module.css'
 
 export function ChallengeBox(): JSX.Element {
 
-  const hasActiveChallenge = true
+  const { activeChallenge, resetChallenge, completChallenge } = useChallenge()
 
   return (
-    
     <div className={styles.challengeBoxContainer}>
-      {hasActiveChallenge ? (
+      {!!activeChallenge ? (
         <div className={styles.chanllegeActive}>
-          <header>Ganhe 400xp</header>
+          <header>Ganhe {activeChallenge.amount}xp</header>
           <main>
-            <img src="icons/body.svg" alt="Body"/>
+            <img src={`icons/${activeChallenge.type}.svg`} alt="Body"/>
             <strong>Novo desafio</strong>
-            <p>Levante e faça uma caminha de 3 minutos</p>
+            <p>{activeChallenge.description}</p>
           </main>
           <footer>
             <button 
               type="button"
+              onClick={resetChallenge}
               className={styles.challengeFailedButton}
             >
               Falhei
             </button>
             <button
               type="button"
+              onClick={() => completChallenge(activeChallenge.amount)}
               className={styles.challengeSucceedButton}
             >Completei</button>
           </footer>
