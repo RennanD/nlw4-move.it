@@ -34,6 +34,9 @@
 body {
   background: var(--background);
   color: var(--text);
+  height: 100vh;
+  max-width: 1080px;
+  margin: 0 auto;
 }
 
 body, input, textarea, button {
