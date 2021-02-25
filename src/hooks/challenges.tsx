@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 import challenges from '../helpers/challenges.json';
 
@@ -12,6 +12,7 @@ interface ChallengeContextData {
   level: number;
   currentExperience: number;
   challengesCompleted: number;
+  nextExperienceLevel: number
   activeChallenge: ChallengeProps;
   levelUp(): void;
   completChallenge(xp: number): void;
@@ -30,6 +31,10 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
   const [level, setLevel] = useState(1);
   const [currentExperience, setCurrentExperience] = useState(0)
   const [challengesCompleted, setChallengesCompleted] = useState(0)
+
+  const nextExperienceLevel = useMemo(() => 
+    Math.pow((level + 1) * 4, 2)
+  ,[level]) 
 
   const [activeChallenge, setActiveChallenge] = useState(null)
 
@@ -63,7 +68,8 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
       startNewChallenge: handleStartNewChallenge,
       activeChallenge,
       resetChallenge: handleResetChallenge,
-      completChallenge: handleCompleteChallenge
+      completChallenge: handleCompleteChallenge,
+      nextExperienceLevel
     }} 
   >
     {children}

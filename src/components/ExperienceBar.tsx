@@ -4,9 +4,12 @@ import styles from '../styles/components/ExperienceBar.module.css';
 
 export function ExperienceBar() {
   
-  const { currentExperience } = useChallenge()
+  const { currentExperience, nextExperienceLevel } = useChallenge()
 
-  const percentExperience = useMemo(() => (currentExperience * 100) / 600 , [currentExperience])
+  const percentExperience = useMemo(() =>
+    Math.round((currentExperience * 100) / nextExperienceLevel) 
+    ,[currentExperience]
+  )
 
   return (
     <header className={styles.experienceBar}>
@@ -17,6 +20,7 @@ export function ExperienceBar() {
           {currentExperience > 0 && `${currentExperience}xp`}
         </span>
       </div>
+      <span>{nextExperienceLevel}xp</span>
       
     </header>
   );
