@@ -7,7 +7,7 @@
 </h2>
 
 <h3 align="center">
-    Created in Next Level Week, a Rockseat's envent. 
+    Created in Next Level Week, a Rockseat's event. 
 </h3>
 
 <p align="center">
