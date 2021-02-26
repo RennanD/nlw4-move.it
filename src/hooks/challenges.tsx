@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import challenges from '../helpers/challenges.json';
 
@@ -28,6 +28,10 @@ const ChallengeContext = createContext({} as ChallengeContextData);
 
 export function ChallengeProvider({ children }: ChallengeProviderProps) {
 
+  useEffect(() => {
+    Notification.requestPermission()
+  },[])
+
   const [level, setLevel] = useState(1);
   const [currentExperience, setCurrentExperience] = useState(0)
   const [challengesCompleted, setChallengesCompleted] = useState(0)
@@ -46,7 +50,14 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
     const radomChallengeIndex = Math.floor(Math.random() * challenges.length)
     const challenge = challenges[radomChallengeIndex];
     setActiveChallenge(challenge)
-    console.log('start');
+
+    new Audio('/notification.mp3').play()
+
+    if(Notification.permission === 'granted') {
+      new Notification('Novo desafio', {
+        body: `Valendo ${challenge.amount}xp`
+      })
+    }
   },[])
 
   const handleResetChallenge = useCallback(() => {
