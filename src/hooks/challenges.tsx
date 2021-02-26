@@ -11,6 +11,8 @@ import Cookie from 'js-cookie'
 
 import challenges from '../helpers/challenges.json';
 
+import { LevelUpModal } from "../components/LevelUpModal";
+
 interface ChallengeProps {
   type: 'body' | 'eye';
   description: string;
@@ -21,8 +23,9 @@ interface ChallengeContextData {
   level: number;
   currentExperience: number;
   challengesCompleted: number;
-  nextExperienceLevel: number
+  nextExperienceLevel: number;
   activeChallenge: ChallengeProps;
+  toggleModal(): void
   levelUp(): void;
   completChallenge(xp: number): void;
   startNewChallenge(): void;
@@ -54,6 +57,8 @@ export function ChallengeProvider({
     storagedchallengesCompleted ?? 0
   )
 
+  const [isLevelModalOpen, setIsLevelModalOpen] = useState(false)
+
   const nextExperienceLevel = useMemo(() => 
     Math.pow((level + 1) * 4, 2)
   ,[level]) 
@@ -70,9 +75,14 @@ export function ChallengeProvider({
     Cookie.set('currentExperience', String(currentExperience))
   },[level, challengesCompleted, currentExperience])
 
+  const handleToggleModal = useCallback(() => {
+    setIsLevelModalOpen(state => !state)
+  },[])
+
   const handleLevelUp = useCallback(() => {
     setLevel(level + 1)
-  },[level])
+    handleToggleModal()
+  },[level, handleToggleModal])
 
   const handleStartNewChallenge = useCallback(() => {
     const radomChallengeIndex = Math.floor(Math.random() * challenges.length)
@@ -109,6 +119,7 @@ export function ChallengeProvider({
     setChallengesCompleted(challengesCompleted + 1)
   },[currentExperience, activeChallenge, handleLevelUp, challengesCompleted])
 
+
   return ( 
   <ChallengeContext.Provider 
     value={{ 
@@ -120,10 +131,12 @@ export function ChallengeProvider({
       activeChallenge,
       resetChallenge: handleResetChallenge,
       completChallenge: handleCompleteChallenge,
-      nextExperienceLevel
+      nextExperienceLevel,
+      toggleModal: handleToggleModal
     }} 
   >
     {children}
+    {isLevelModalOpen && <LevelUpModal />}
   </ChallengeContext.Provider> 
   );
 }
