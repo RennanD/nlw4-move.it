@@ -54,9 +54,21 @@ export function ChallengeProvider({ children }: ChallengeProviderProps) {
   },[])
 
   const handleCompleteChallenge = useCallback((xp: number) => {
-    setCurrentExperience(currentExperience + xp);
+    if(!activeChallenge) {
+      return;
+    }
+
+    let finalExperience = currentExperience + xp;
+
+    if(finalExperience >= nextExperienceLevel) {
+      finalExperience = finalExperience - nextExperienceLevel;
+      handleLevelUp()
+
+    }
+    setCurrentExperience(finalExperience);
     setActiveChallenge(null)
-  },[currentExperience])
+    setChallengesCompleted(challengesCompleted + 1)
+  },[currentExperience, activeChallenge, handleLevelUp, challengesCompleted])
 
   return ( 
   <ChallengeContext.Provider 

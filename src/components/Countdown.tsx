@@ -1,20 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '../styles/components/Countdown.module.css'
 
-import { useChallenge } from '../hooks/challenges'
-
-let countdownTimeout: NodeJS.Timeout;
+import { useCountdown } from '../hooks/countdown';
 
 export function Countdown(): JSX.Element {
 
-  const { startNewChallenge, activeChallenge } = useChallenge()
-
-  const [time, setTime] = useState(0.1 * 60)
-  const [isActive, setIsActive] = useState(false)
-  const [hasFinished, setHasFinished] = useState(false)
-
-  const minutes = useMemo(() => Math.floor(time / 60), [time]);
-  const seconds = useMemo(() => time % 60 , [time])
+  const { 
+    minutes, 
+    seconds, 
+    hasCountdownFinished, 
+    isCountdownActive,
+    resetCountdown,
+    startCountdown 
+  } = useCountdown()
+  
   const [minuteLeft, minuteRight] = useMemo(() => 
     String(minutes)
       .padStart(2, '0')
@@ -28,35 +27,6 @@ export function Countdown(): JSX.Element {
     [seconds]
   )
 
-  const handleStartCountdown = useCallback(() => {
-    setIsActive(true);
-  },[])
-
-  const handleResetCountdown = useCallback(() => {
-    clearTimeout(countdownTimeout);
-    setIsActive(false)
-    setTime(0.1 * 60)
-  },[countdownTimeout])
-
-  useEffect(() => {
-    if(!activeChallenge) {
-      setIsActive(false);
-      setTime(0.1 * 60)
-      setHasFinished(false)
-    }
-  },[activeChallenge])
-
-  useEffect(() =>{
-    if(isActive && time > 0) {
-      countdownTimeout = setTimeout(() => {
-        setTime(time - 1)
-      }, 1000);
-    } else if (isActive && time === 0) {
-      setHasFinished(true)
-      setIsActive(false)
-      startNewChallenge()
-    }
-  },[isActive, time, startNewChallenge])
 
   return (
     <div>
@@ -72,7 +42,7 @@ export function Countdown(): JSX.Element {
         </div>
       </div>
 
-      {hasFinished ? (
+      {hasCountdownFinished ? (
         <button 
           disabled
           className={styles.countdownButton}
@@ -81,19 +51,18 @@ export function Countdown(): JSX.Element {
         </button>
       ) : (
         <>
-          {isActive ? (
+          {isCountdownActive ? (
             <button 
               type="button" 
-              onClick={handleResetCountdown}
+              onClick={resetCountdown}
               className={`${styles.countdownButton} ${styles.active}`}
             >
-              Abandorar ciclo 
-              
+              Abandonar ciclo
             </button>
           ) : (
             <button 
               type="button" 
-              onClick={handleStartCountdown}
+              onClick={startCountdown}
               className={`${styles.countdownButton} ${styles}`}
             >
               Iniciar um ciclo
